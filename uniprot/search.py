@@ -2,9 +2,8 @@ import requests, sys
 import xml.etree.ElementTree as ET
 import json
 import functools
-
 from requests.models import Response
-
+import argparse
 
 class Uniprot:
 
@@ -23,6 +22,13 @@ class Uniprot:
             responseBody:str
 
         """
+        try: 
+            assert isinstance(genes, list)
+        except AssertionError as e:
+            e.args += ("[genes] argument needs to be type(list)", )
+            raise
+            
+
         self.genes = genes
 
         self.requestURL = f"https://www.ebi.ac.uk/proteins/api/proteins?offset=0&size=100&gene={'%2C%20'.join(genes)}&organism=human"
@@ -93,8 +99,16 @@ class Uniprot:
         return extracted_info
 
 if __name__ == "__main__":
-    genes = ["MYL2", "APOE", "PAX7"]
+    try:
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--genes', default=None, type=str, help="", nargs="+")
+        args = parser.parse_args()
+        genes = args.genes
+    except Exception as e:
+        genes = ["MYL2", "APOE", "PAX7"]
+        
     uni = Uniprot()
     uni.gene_search(genes=genes)
     output = uni.extract_function()
-    print(output)
+    for k in output:
+        print("\n\n", k, "\n\n", "\tValue:\n", output[k])
