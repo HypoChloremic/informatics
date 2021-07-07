@@ -14,11 +14,9 @@ class Uniprot:
         """Performs gene search on the uniprot api
 
         Keyword Arguments:
-            
             gene:list, will be included in the gene search. 
 
         Returns:
-            
             responseBody:str
 
         """
